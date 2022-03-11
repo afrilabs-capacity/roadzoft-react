@@ -1,10 +1,28 @@
 import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Legend,
+  ResponsiveContainer,
+  CartesianGrid,
+  Tooltip,
+  BarChart,
+  Bar,
+} from "recharts";
+import { Chart } from "react-charts";
 import Badge from "@mui/material/Badge";
+import LargeCard from "../../components/cards/LargeCard";
 import TopCards from "../../components/cards/TopCards";
 import Header from "../../components/header/Header";
-import CitizenSidebar from "../../components/sidebar/CitizenSidebar";
+import Sidebar from "../../components/sidebar/Sidebar";
 import { API_BASE } from "../../utils/Api";
 import { useHistory } from "react-router-dom";
+import LargeProjectsCard from "../../components/cards/LargeProjectCard";
+import LargeReportsCard from "../../components/cards/LargeReportsCard";
+import LargeMessagesCard from "../../components/cards/LargeMessagesCard";
+import NewCardSmall from "../../components/cards/NewCardSmall";
 import HomeTableCard from "../../components/cards/HomeTableCard";
 import HomeTableCard2 from "../../components/cards/HomeTableCard2";
 
@@ -13,8 +31,16 @@ import GreenBG from "../../assets/bg/greensquare.svg";
 import OrangeBG from "../../assets/bg/orangesquare.svg";
 import RedBG from "../../assets/bg/redsquare.svg";
 import YellowBG from "../../assets/bg/yellowsquare.svg";
+import SplineChart from "../../components/charts/SplineChart";
+import axios from "axios";
 
-function CitizenDashboard() {
+function AdhocCitizenDashboard() {
+  const initialSearchTerms = {
+    state_id: "",
+    lga_id: "",
+    project_id: "",
+    status: "",
+  };
   const history = useHistory();
   const [user, setUser] = React.useState({});
   const [users, setUsers] = React.useState([]);
@@ -22,19 +48,24 @@ function CitizenDashboard() {
   const [reports, setReports] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [open, setOpen] = React.useState(false);
-
+  const [reportsData, setReportsData] = React.useState([]);
   const title = "Overview";
 
   const getReports = async () => {
-    const response = await fetch(`${API_BASE}/reports`, {
+    const response = await fetch(`${API_BASE}/supervisor/reports`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-RGM-PLATFORM": "Citizen",
       },
     });
     const result = await response.json();
-    result && setReports(result.data.data);
+    result && setReports(result);
+    result &&
+      result.data &&
+      result.data.data &&
+      setReportsData(result.data.data);
+    // result && setTotalPages(result.data.last_page);
+    // result && setCountPerPage(result.data.per_page);
     setLoading(false);
     console.log("Reports", result);
   };
@@ -52,9 +83,10 @@ function CitizenDashboard() {
         }
       );
       const result = await response.json();
-      const data = result.data;
-      setUser(result.data);
-      console.log("User:", result);
+      //alert(localStorage.getItem("user"));
+      result && setUser(result.data);
+      // result && alert(result.data);
+      // console.log("User:", result);
     } catch (error) {
       console.log(error);
     }
@@ -65,7 +97,6 @@ function CitizenDashboard() {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-RGM-PLATFORM": "Citizen",
       },
     });
     const result = await response.json();
@@ -80,7 +111,6 @@ function CitizenDashboard() {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-RGM-PLATFORM": "Citizen",
       },
     });
     const result = await response.json();
@@ -90,58 +120,100 @@ function CitizenDashboard() {
   };
 
   React.useEffect(() => {
+    // localStorage.removeItem("user");
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("roles");
+    // localStorage.removeItem("platform");
+    // history.push("/");
     getProjects();
     getReports();
     getUsers();
     getUser();
-    if (localStorage.getItem("roles") == "Ad-hoc") {
-      alert("You dont have access");
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      localStorage.removeItem("roles");
-      history.push("/");
-    }
+    // if (JSON.parse(localStorage.getItem("roles"))[0] == "Ad-hoc") {
+    //   alert("You dont have access");
+    //   localStorage.removeItem("user");
+    //   localStorage.removeItem("token");
+    //   localStorage.removeItem("roles");
+    //   history.push("/");
+    // }
   }, []);
 
-  const reportData = [
+  React.useEffect(() => {
+    //alert(JSON.stringify(user));
+  }, [user]);
+
+  const infos = [
     {
       title: "Total Reports",
       color: "rgb(17 76 168)",
       image: BlueBG,
-      data: reports.length,
+      data: reports && reports.report_meta && reports.report_meta.Total,
     },
     {
       title: "Approved",
       color: "#035C36",
       image: GreenBG,
-      data: reports.filter((report) => report.status === "Approved").length,
+      data: reports && reports.report_meta && reports.report_meta.Approved,
     },
     {
       title: "Pending",
       color: "rgb(209 148 35)",
       image: OrangeBG,
-      data: reports.filter((report) => report.status === "Pending").length,
+      data: reports && reports.report_meta && reports.report_meta.Pending,
     },
 
     {
       title: "Disapproved",
       color: "#0D0709",
       image: RedBG,
-      data: reports.filter((report) => report.status === "Rejected").length,
+      data: reports && reports.report_meta && reports.report_meta.Rejected,
     },
     {
       title: "Queried",
       color: "#DD411A",
       image: YellowBG,
-      data: reports.filter((report) => report.status === "Queried").length,
+      data: reports && reports.report_meta && reports.report_meta.Queried,
     },
   ];
+
+  const CustomTooltip = () => {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">Users Per Project</p>
+      </div>
+    );
+  };
+  const CustomTooltip2 = () => {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">Reports Per Project</p>
+      </div>
+    );
+  };
+
+  const CustomizedLabel = () => {
+    return (
+      <>
+        <p>Users</p>
+      </>
+    );
+  };
+
+  const CustomLabel = () => {
+    return (
+      <g>
+        <foreignObject x={0} y={0} width={100} height={100}>
+          <div>Label</div>
+        </foreignObject>
+      </g>
+    );
+  };
 
   return (
     <div>
       <div className="flex flex-row">
         <div className="dashboard-left">
-          <CitizenSidebar />
+          <Sidebar />
         </div>
 
         <div style={{ overflow: "scroll" }} className="dashboard-right">
@@ -151,49 +223,25 @@ function CitizenDashboard() {
           />
           <hr />
           <div className="dashboard-wrapper">
-            <div className="mx-5 my-3 flex grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 gap-1 justify-items-center items-center">
-              <div
-                className="flex flex-col justify-center items-center shadow-md"
-                style={{
-                  width: 180,
-                  height: 180,
-                  background: "#043C2D",
-                  margin: 10,
-                  borderRadius: "20px",
-                }}
-              >
-                <div className="report-item flex flex-row justify-center items-center text-white">
-                  <Badge variant="dot" color="error">
-                    <h2 className="text-4xl mr-3">15</h2>
-                  </Badge>
-                  <span>New Reports</span>
-                </div>
-                <div
-                  style={{ color: "#49BF78" }}
-                  className="report-item flex flex-row justify-center items-center text-white"
-                >
-                  <h4 className="text-xl mr-2">7</h4>
-                  <span className="text-sm">Citizen Reports</span>
-                </div>
-                <div
-                  style={{ color: "#CEFF68" }}
-                  className="report-item flex flex-row justify-center items-center text-white"
-                >
-                  <h4 className="text-xl mr-2">8</h4>
-                  <span className="text-sm">Inspection Reports</span>
-                </div>
-              </div>
-              {reportData.map((report) => (
-                <TopCards info={report} />
-              ))}
+            <div className="ml-2 my-1 flex grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 xs:grid-cols-2 gap-1 justify-items-center items-center">
+              {reports &&
+                reports.data &&
+                reports.report_meta &&
+                infos.map((info) => <TopCards info={info} />)}
+            </div>
+            {/* <br /> */}
+            <div className="my-4">
+              <SplineChart />
             </div>
 
-            <div className="home-card shadow-md">
+            {/* <p>Coming soon ...</p> */}
+
+            {/* <div className="home-card shadow-md">
               <HomeTableCard data={reports} />
             </div>
             <div className="home-card shadow-md">
               <HomeTableCard2 data={reports} />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -201,4 +249,4 @@ function CitizenDashboard() {
   );
 }
 
-export default CitizenDashboard;
+export default AdhocCitizenDashboard;

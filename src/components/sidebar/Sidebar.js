@@ -4,7 +4,11 @@ import * as Icon from "react-feather";
 import * as Item from "@mui/material";
 import { MdLightbulb } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { BottomSeidebarData, SidebarData } from "./SideBarMenu";
+import {
+  BottomSeidebarData,
+  SidebarData,
+  SupervisorSidebarData,
+} from "./SideBarMenu";
 import { useHistory } from "react-router-dom";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
@@ -12,22 +16,29 @@ import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 export default function Sidebar() {
   const history = useHistory();
   const [open, setOpen] = React.useState(true);
-  const [show, setShow] = React.useState('d-none')
+  const [show, setShow] = React.useState(false);
+
+  const defautSidebar =
+    JSON.parse(localStorage.getItem("roles"))[0].name == "Supervisor"
+      ? SupervisorSidebarData
+      : SidebarData;
 
   const handleSub = () => {
-      if (show == 'd-none') {
-        setShow('d-block')
-      } else {
-        setShow('d-none')
-      }
-  }
+    setShow((prevState) => !prevState);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("roles");
+    localStorage.removeItem("roles");
     history.push("/");
   };
+
+  // React.useEffect(() => {
+  //   alert(JSON.stringify(localStorage.getItem("roles")));
+  // }, []);
+
   return (
     <>
       <div
@@ -50,21 +61,36 @@ export default function Sidebar() {
             </div>
             <nav className="nav-menu bg-green-900">
               <ul className="sidebar bg-green-900">
-                {SidebarData.map((item, i) => (
-                  <li className={item.classname}>
-                    <Link to={item.path}>
-                      {item.icon}
-                      <span>{item.title}</span>
-                      <span onClick={handleSub}>{item.frontIcon}</span>
-                    </Link>
-                    {item.sub && item.sub.map(i => <Link className={show} to={i.path}>
-                      {i.icon}
-                      <span>{i.title}</span>
-                    </Link>)}
-                  </li>
-                ))}
-                 <div className="px-5">
-                <hr className="text-green-100 border-green-400 bg-green-400 " />
+                {defautSidebar &&
+                  defautSidebar.map((item, i) => (
+                    <>
+                      <li className={item.classname}>
+                        <Link to={item.path} onClick={handleSub}>
+                          {item.icon}
+                          <span>{item.title}</span>
+                          <span>{item.frontIcon}</span>
+                        </Link>
+                      </li>
+
+                      {show && (
+                        <li className={"grid justify-items-center"}>
+                          <div>
+                            {item.sub &&
+                              item.sub.map((i) => (
+                                <div className="flex items-center justify-start m-1">
+                                  <span className="mr-2">{i.icon}</span>
+                                  <a href={i.path}>
+                                    <span>{i.title}</span>
+                                  </a>
+                                </div>
+                              ))}
+                          </div>
+                        </li>
+                      )}
+                    </>
+                  ))}
+                <div className="px-5">
+                  <hr className="text-green-100 border-green-400 bg-green-400 " />
                 </div>
                 {BottomSeidebarData.map((item, i) => (
                   <li className={item.classname}>
@@ -75,53 +101,6 @@ export default function Sidebar() {
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-row justify-center items-center">
-                <Item.Button
-                  onClick={handleLogout}
-                  color="success"
-                  variant="outlined"
-                >
-                  Logout
-                </Item.Button>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </div>
-      <div
-        className={
-          open ? "hidden" : "sidebar-container2 block bg-green-900 h-screen"
-        }
-      >
-        <div className="sidebar-container2 h-screen bg-green-900">
-          <div className="sidebar-content bg-green-900 mx-5 flex flex-col justify-center items-center text-white">
-            <div className="sidebar-logo my-5 flex flex-row justify-center items-center">
-              <img className="mr-5 ml-5" src={Logo} width="50px" alt="logo" />
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => setOpen(true)}
-                className="flex text-gray-200 text-right flex-row justify-end items-end"
-              >
-               {/*  <ToggleOffIcon style={{ fill: "gray" }} /> */}
-              </div>
-            </div>
-            <nav className="nav-menu bg-green-900">
-              <div className="sidebar bg-green-900">
-                {SidebarData.map((item, i) => (
-                  <p className={item.classname2}>
-                    <Link to={item.path}>{item.icon}</Link>
-                  </p>
-                ))}
-                <div className="">
-                <hr className="text-green-100 border-green-50 bg-green-400 px-5" />
-                </div>
-                
-                {BottomSeidebarData.map((item, i) => (
-                  <p className={item.classname2}>
-                    <Link to={item.path}>{item.icon}</Link>
-                  </p>
-                ))}
-              </div>
               <div className="flex flex-row justify-center items-center">
                 <Item.Button
                   onClick={handleLogout}

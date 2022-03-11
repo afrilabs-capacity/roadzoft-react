@@ -27,10 +27,12 @@ const HomeTableCard = ({ data }) => {
             key={i}
             color={item.status == "Approved" ? "#49BF78" : "#C8E883"}
           >
-              <div style={{minWidth: 150}}>
-              <p className="">{item.message == null ? 'N/A' : item.message.substring(0, 25)}</p>
-              </div>
-            
+            <div style={{ minWidth: 150 }}>
+              <p className="">
+                {item.message == null ? "N/A" : item.message.substring(0, 25)}
+              </p>
+            </div>
+
             <div className="center-item">
               <p className="">
                 {item.user.lga}, {item.user.State}
@@ -42,22 +44,17 @@ const HomeTableCard = ({ data }) => {
               />
             </div>
             <div className="center-item">
-              <p className="">
-                {item.user.name}
-              </p>
-              <p className="text-gray-400">
-                {item.user.email}
-              </p>
+              <p className="">{item.user.name}</p>
+              <p className="text-gray-400">{item.user.email}</p>
             </div>
             <div className="flex flex-col justify-between items-center">
-            <Moment className="" format="DD-MM-YYYY">
-              {item.created_at}
-            </Moment>
-            <Moment className="text-gray-400" fromNow>
-              {item.created_at}
-            </Moment>
+              <Moment className="" format="DD-MM-YYYY">
+                {item.created_at}
+              </Moment>
+              <Moment className="text-gray-400" fromNow>
+                {item.created_at}
+              </Moment>
             </div>
-            
           </CardWrapper>
         ))}
       </div>

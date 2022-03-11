@@ -30,9 +30,8 @@ function Notifications() {
         }
       );
       const result = await response.json();
-      const data = result.data;
-      setUser(data);
-      console.log("User:", result);
+
+      result && setUser(result);
     } catch (error) {
       console.log(error);
     }
@@ -47,9 +46,9 @@ function Notifications() {
       },
     });
     const result = await (await response).json();
-    setUserLog(result.data.data);
-    setTotalPages(result.data.total);
-    console.log("User Log", result);
+    // setUserLog(result.data.data);
+    // setTotalPages(result.data.total);
+    // console.log("User Log", result);
   };
 
   React.useEffect(() => {

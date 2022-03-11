@@ -52,10 +52,9 @@ export default function Landing() {
           <h2 style={{ color: "#064E3B" }} className="text-2xl font-bold my-5">
             ROADZOFT
           </h2>
-          
         </div>
         <div className="flex flex-col justify-between items-center mb-5">
-        <h4 style={{ color: "#064E3B" }} className="text-xl font-bold">
+          <h4 style={{ color: "#064E3B" }} className="text-xl font-bold">
             Welcome, Tom West
           </h4>
           <p style={{ color: "#017831" }} className="text-xs">
@@ -65,7 +64,10 @@ export default function Landing() {
 
         <div className="flex flex-col justify-center items-center mb-5 w-full">
           <Button
-            onClick={() => history.push("/dashboard")}
+            onClick={() => {
+              localStorage.setItem("platform", "Ad-hoc");
+              history.push("/dashboard");
+            }}
             className="w-full bg-green-900 mb-5"
             color="success"
             variant="contained"
@@ -73,15 +75,34 @@ export default function Landing() {
             <span className="capitalize">Ad-hoc Dashboard</span>
           </Button>
         </div>
-        <div className="flex flex-col justify-center items-center mb-5 w-full">
+        {/* <div className="flex flex-col justify-center items-center mb-5 w-full">
           <Button
-            onClick={() => history.push("/citizen/dashboard")}
+            onClick={() => {
+              localStorage.setItem("platform", "Ad-hoc");
+              history.push("/dashboard");
+            }}
             className="w-full bg-green-900 mb-3"
             color="success"
             variant="outlined"
           >
             <span style={{ color: "#017831" }} className="capitalize">
               Citizen Dashboard
+            </span>
+          </Button>
+        </div> */}
+
+        <div className="flex flex-col justify-center items-center mb-5 w-full">
+          <Button
+            onClick={() => {
+              localStorage.setItem("platform", "Supervisor");
+              history.push("/dashboard");
+            }}
+            className="w-full bg-green-900 mb-3"
+            color="success"
+            variant="outlined"
+          >
+            <span style={{ color: "#017831" }} className="capitalize">
+              Supervisor
             </span>
           </Button>
         </div>

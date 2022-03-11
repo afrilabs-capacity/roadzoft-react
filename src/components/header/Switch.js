@@ -1,20 +1,20 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import PersonIcon from '@mui/icons-material/Person';
-import AddIcon from '@mui/icons-material/Add';
-import Typography from '@mui/material/Typography';
-import { blue } from '@mui/material/colors';
-import {useHistory} from 'react-router-dom';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import PersonIcon from "@mui/icons-material/Person";
+import AddIcon from "@mui/icons-material/Add";
+import Typography from "@mui/material/Typography";
+import { blue } from "@mui/material/colors";
+import { useHistory } from "react-router-dom";
 
-const emails = ['Citizen', 'Ad-hoc'];
+const platforms = ["Ad-hoc", "Supervisor"];
 
 function SwitchDialog(props) {
   const { onClose, selectedValue, open } = props;
@@ -25,22 +25,29 @@ function SwitchDialog(props) {
   };
 
   const handleListItemClick = (value) => {
-      if (value == "Ad-hoc") {
-        history.push("/dashboard")
-      } else {
-        history.push("/citizen/dashboard")
-      }
-   
-    //onClose(value);
+    if (value == "Ad-hoc") {
+      localStorage.setItem("platform", "Ad-hoc");
+      window.location.reload();
+    } else if (value == "Citizens") {
+      localStorage.setItem("platform", "Citizen");
+      window.location.reload();
+    } else if (value == "Supervisor") {
+      localStorage.setItem("platform", "Supervisor");
+      window.location.reload();
+    }
   };
 
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Switch to:</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {emails.map((email) => (
-          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-            <ListItemText primary={email} />
+        {platforms.map((platform) => (
+          <ListItem
+            button
+            onClick={() => handleListItemClick(platform)}
+            key={platform}
+          >
+            <ListItemText primary={platform} />
           </ListItem>
         ))}
       </List>
@@ -56,7 +63,7 @@ SwitchDialog.propTypes = {
 
 export default function SwitchDialogDemo() {
   const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+  const [selectedValue, setSelectedValue] = React.useState(platforms[1]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -70,12 +77,17 @@ export default function SwitchDialogDemo() {
   return (
     <div>
       <div variant="outlined" onClick={handleClickOpen}>
-      <div className="dashname-container center-item">
-        <div className="dashname-wrapper">
-          <p>Current View</p>
-          <p onClick={() => alert('You want to change dashboard?')} style={{ fontWeight: "bolder", cursor: 'pointer' }}>Ad-hoc Dashboard</p>
+        <div className="dashname-container center-item">
+          <div className="dashname-wrapper">
+            <p>Current View</p>
+            <p
+              onClick={() => console.log("You want to change dashboard?")}
+              style={{ fontWeight: "bolder", cursor: "pointer" }}
+            >
+              {localStorage.getItem("platform")}
+            </p>
+          </div>
         </div>
-      </div>
       </div>
       <SwitchDialog
         selectedValue={selectedValue}

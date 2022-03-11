@@ -6,9 +6,14 @@ import Modal from "@mui/material/Modal";
 import * as Item from "@mui/material";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import ReactMapGL, { Marker} from "react-map-gl";
-import mapboxgl from "mapbox-gl";
-import * as Icon from "react-feather"
+import ReactMapGL, { Marker } from "react-map-gl";
+// import mapboxgl from "mapbox-gl";
+import * as Icon from "react-feather";
+
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+// mapboxgl.workerClass =
+//   require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 const style = {
   position: "absolute",
@@ -39,10 +44,6 @@ export default function ReportModal({
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  // @ts-ignore
-  // eslint-disable-next-line import/no-webpack-loader-syntax
-  mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
   return (
     <div>
@@ -81,7 +82,7 @@ export default function ReportModal({
             {latitude}/{longitude}
           </Typography>
           <div style={{ width: 450, height: 200 }}>
-            <ReactMapGL
+            {/* <ReactMapGL
               mapboxApiAccessToken={apiKey}
               latitude={latitude}
               longitude={longitude}
@@ -97,7 +98,7 @@ export default function ReportModal({
               >
                 <Icon.MapPin size={30} fill="red" />
               </Marker>
-            </ReactMapGL>
+            </ReactMapGL> */}
           </div>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Status:
@@ -106,17 +107,20 @@ export default function ReportModal({
             {status}
           </Typography>
 
-          <div className="flex flex-row justify-between items-center my-5">
-            <Item.Button onClick={approve} color="primary" variant="outlined">
-              Approve
-            </Item.Button>
-            <Item.Button onClick={reject} color="error" variant="outlined">
-              Reject
-            </Item.Button>
-            <Item.Button onClick={query} color="warning" variant="outlined">
-              Query
-            </Item.Button>
-          </div>
+          {JSON.parse(localStorage.getItem("roles"))[0].name !==
+            "Supervisor" && (
+            <div className="flex flex-row justify-between items-center my-5">
+              <Item.Button onClick={approve} color="primary" variant="outlined">
+                Approve
+              </Item.Button>
+              <Item.Button onClick={reject} color="error" variant="outlined">
+                Reject
+              </Item.Button>
+              <Item.Button onClick={query} color="warning" variant="outlined">
+                Query
+              </Item.Button>
+            </div>
+          )}
         </Box>
       </Modal>
     </div>

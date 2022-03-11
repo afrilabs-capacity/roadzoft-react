@@ -116,7 +116,7 @@ function Projects() {
         return (
           <Item.Button
             onClick={() => {
-              if (window.confirm("Delete this product?")) handleDelete(row.id);
+              if (window.confirm("Delete this project?")) handleDelete(row.id);
             }}
             color="error"
             variant="contained"
@@ -147,10 +147,7 @@ function Projects() {
         </div>
 
         <div className="dashboard-right">
-          <Header
-            title={title}
-            user={user}
-          />
+          <Header title={title} user={user} />
           <h3 className="mx-5 mt-5 mb-3 font-bold text-gray-700 text-2xl">
             Projects
           </h3>
