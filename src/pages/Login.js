@@ -97,7 +97,7 @@ export default function Login() {
             size="small"
           />
         </div>
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full mb-2">
           <TextField
             className="w-full"
             onChange={(e) => setPassword(e.target.value)}
@@ -107,13 +107,6 @@ export default function Login() {
             autoComplete="current-password"
             size="small"
           />
-          <Link
-            to="/forgot-password"
-            style={{ color: "#017831" }}
-            className="mb-5 text-right text-xs"
-          >
-            Forgot Password?
-          </Link>
         </div>
         <Button
           onClick={handleLogin}
@@ -129,9 +122,9 @@ export default function Login() {
         >
           {loading ? "Authenticating..." : "Log In"}
         </Button>
-        <p style={{ color: "#017831" }} className="my-2 text-xs">
+        {/* <p style={{ color: "#017831" }} className="my-2 text-xs">
           Don't have an account? Contact Admin.
-        </p>
+        </p> */}
         {message != "" && (
           <Item.Alert color="info" variant="filled">
             {message}

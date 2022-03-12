@@ -128,7 +128,7 @@ function SingleSupervisorReport() {
               <>
                 <div className="my-2 p-2 text-center">
                   <h2 className="text-xl font-bold">Name of Supervisor</h2>
-                  <p>{realUser.name}</p>
+                  <p>{user.name}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
