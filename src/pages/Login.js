@@ -74,62 +74,76 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container flex justify-center items-center">
-      <div className="overlay p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex flex-col items-center space">
-        <div className="flex flex-col justify-between items-center mb-5">
-          <img src={Logo} width="90" alt="Ferma Logo" />
-          <h2 style={{ color: "#064E3B" }} className="text-3xl font-bold my-2">
-            ROADZOFT
-          </h2>
-          <h4 style={{ color: "#017831" }}>
-            FERMA Monotoring and Evaluation Portal
-          </h4>
-        </div>
-        <div className="flex flex-col justify-center items-center mb-5 w-full">
-          <TextField
-            className="w-full"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            id="outlined-required"
-            type="text"
-            label="Staff ID"
-            placeholder="Phone Number"
-            size="small"
-          />
-        </div>
-        <div className="flex flex-col w-full mb-2">
-          <TextField
-            className="w-full"
-            onChange={(e) => setPassword(e.target.value)}
-            id="outlined-password-input"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            size="small"
-          />
-        </div>
-        <Button
-          onClick={handleLogin}
-          style={{
-            backgroundColor: "green",
-            opacity: !loading ? 1 : 0.7,
-            color: "white",
-          }}
-          className="w-full bg-green-900 mb-3"
-          color="success"
-          variant="contained"
-          disabled={loading}
-        >
-          {loading ? "Authenticating..." : "Log In"}
-        </Button>
-        {/* <p style={{ color: "#017831" }} className="my-2 text-xs">
+    <div className="login-container p-5 md:p-20 grid h-screen">
+      <div className="grid md:flex justify-center items-center p-5 rounded bg-none md:bg-white">
+        <div className="overlay p-6 max-w-sm mx-auto bg-white rounded-xl border flex flex-col items-center space">
+          <div className="flex flex-col justify-between items-center mb-5">
+            <img src={Logo} width="90" alt="Ferma Logo" />
+            <h2
+              style={{ color: "#064E3B" }}
+              className="text-3xl font-bold my-2"
+            >
+              ROADZOFT
+            </h2>
+            <h4 style={{ color: "#017831" }}>
+              FERMA Monotoring and Evaluation Portal
+            </h4>
+          </div>
+          <div className="flex flex-col justify-center items-center mb-5 w-full">
+            <TextField
+              className="w-full"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              id="outlined-required"
+              type="text"
+              label="Staff ID"
+              placeholder="Phone Number"
+              size="small"
+            />
+          </div>
+          <div className="flex flex-col w-full mb-2">
+            <TextField
+              className="w-full"
+              onChange={(e) => setPassword(e.target.value)}
+              id="outlined-password-input"
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+              size="small"
+            />
+          </div>
+          <Button
+            onClick={handleLogin}
+            style={{
+              backgroundColor: "green",
+              opacity: !loading ? 1 : 0.7,
+              color: "white",
+            }}
+            className="w-full bg-green-900 mb-3"
+            color="success"
+            variant="contained"
+            disabled={loading}
+          >
+            {loading ? "Authenticating..." : "Log In"}
+          </Button>
+          {/* <p style={{ color: "#017831" }} className="my-2 text-xs">
           Don't have an account? Contact Admin.
         </p> */}
-        {message != "" && (
-          <Item.Alert color="info" variant="filled">
-            {message}
-          </Item.Alert>
-        )}
+          {message != "" && (
+            <Item.Alert color="info" variant="filled">
+              {message}
+            </Item.Alert>
+          )}
+        </div>
+
+        <div className="overlay p-6 max-w-sm mx-auto flex flex-col items-center space flex bg-white rounded-xl my-2 md:my-0">
+          <img src="/phone.png" class="my-2" />
+          <a href="/app.apk" download>
+            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+              Download Roadzoft Mobile App
+            </button>
+          </a>
+        </div>
       </div>
     </div>
   );
