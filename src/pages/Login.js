@@ -85,7 +85,7 @@ export default function Login() {
             >
               ROADZOFT
             </h2>
-            <h4 style={{ color: "#017831" }}>
+            <h4 style={{ color: "#017831" }} className="text-center">
               FERMA Monotoring and Evaluation Portal
             </h4>
           </div>
