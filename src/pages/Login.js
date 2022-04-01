@@ -138,7 +138,7 @@ export default function Login() {
 
         <div className="overlay p-6 max-w-sm mx-auto flex flex-col items-center space flex bg-white rounded-xl my-2 md:my-0">
           <img src="/phone.png" class="my-2" />
-          <a href="/app.apk" download>
+          <a href="/app_new.apk" download>
             <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
               Download Roadzoft Mobile App
             </button>
