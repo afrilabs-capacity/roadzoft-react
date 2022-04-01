@@ -7,7 +7,7 @@ import * as Item from "@mui/material";
 import Moment from "react-moment";
 import ProjectTable from "../../components/tables/ProjectTable";
 import PaginationComponent from "../../components/tables/Pagination";
-import { API_BASE } from "../../utils/Api";
+import { API_BASE,API_BASE_UPLOADS } from "../../utils/Api";
 import ReportModal from "../../components/modals/ReportModal";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -1297,7 +1297,7 @@ function CitizenReports() {
       cell: (row) => {
         return (
           <Item.Avatar
-            src={`https://roadzoftserver.xyz/uploads/${row.photo_1}`}
+            src={`${API_BASE_UPLOADS}/${row.photo_1}`}
             variant="square"
           />
         );
@@ -1305,7 +1305,7 @@ function CitizenReports() {
     },
     {
       selector: "message",
-      name: "Report",
+      name: "Comment",
       sortable: true,
       cell: (row) => {
         return row.message == null ? (
@@ -1330,7 +1330,7 @@ function CitizenReports() {
       },
     },
     { selector: "user.name", name: "User", sortable: true },
-    { selector: "status", name: "Status", sortable: true },
+    // { selector: "status", name: "Status", sortable: true },
     {
       selector: "created_at",
       name: "Submitted",
@@ -1342,7 +1342,7 @@ function CitizenReports() {
     },
     {
       selector: "id",
-      name: "Submitted",
+      name: "Action",
       sortable: true,
       ignoreRowClick: true,
       cell: (row) => {
@@ -1350,10 +1350,10 @@ function CitizenReports() {
           <div>
             <ReportModal
               status={row.status}
-              photo1={`https://roadzoftserver.xyz/uploads/${row.photo_1}`}
-              photo2={`https://roadzoftserver.xyz/uploads/${row.photo_2}`}
-              photo3={`https://roadzoftserver.xyz/uploads/${row.photo_3}`}
-              photo4={`https://roadzoftserver.xyz/uploads/${row.photo_4}`}
+              photo1={row.photo_1 !=null ? `${API_BASE_UPLOADS}/${row.photo_1}`:null}
+              photo2={row.photo_2 !=null ? `${API_BASE_UPLOADS}/${row.photo_2}` :null}
+              photo3={row.photo_3 !=null ? `${API_BASE_UPLOADS}/${row.photo_3}` :null}
+              photo4={row.photo_4 !=null ? `${API_BASE_UPLOADS}/${row.photo_4}` :null}
               latitude={parseFloat(row.latitude)}
               longitude={parseFloat(row.longitude)}
               apiKey="pk.eyJ1IjoibWljaG9sdXNhbnlhIiwiYSI6ImNrd3MybWM4YjEyOGwycHFvaDhsc2Z2Y3AifQ.uSFsVJGkOiUXSTG2SOES2A"
@@ -1363,9 +1363,9 @@ function CitizenReports() {
               comments={() => getComments(row.uuid)}
               commentz={commentz}
             />
-            {row.status === "Queried" && (
+            {/* {row.status === "Queried" && (
               <ReportQuery uuid={row.uuid} reportId={row.id} />
-            )}
+            )} */}
           </div>
         );
       },
@@ -1497,15 +1497,15 @@ function CitizenReports() {
               </FormControl>
             </Box>
 
-            <Item.Button
+            {/* <Item.Button
               onClick={handleSearch}
               className="user-button"
               variant="contained"
             >
               Filter
-            </Item.Button>
+            </Item.Button> */}
 
-            <Box sx={{ minWidth: 200 }}>
+            {/* <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">
                   Filter by Status
@@ -1524,7 +1524,7 @@ function CitizenReports() {
                   <MenuItem value="rejected">Rejected</MenuItem>
                 </Select>
               </FormControl>
-            </Box>
+            </Box> */}
           </div>
           <hr />
           <ProjectTable columns={columns} data={data} total={countPerPage} />

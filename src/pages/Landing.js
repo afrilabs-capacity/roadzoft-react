@@ -75,10 +75,10 @@ export default function Landing() {
             <span className="capitalize">Ad-hoc Dashboard</span>
           </Button>
         </div>
-        {/* <div className="flex flex-col justify-center items-center mb-5 w-full">
+        <div className="flex flex-col justify-center items-center mb-5 w-full">
           <Button
             onClick={() => {
-              localStorage.setItem("platform", "Ad-hoc");
+              localStorage.setItem("platform", "Citizen");
               history.push("/dashboard");
             }}
             className="w-full bg-green-900 mb-3"
@@ -89,7 +89,7 @@ export default function Landing() {
               Citizen Dashboard
             </span>
           </Button>
-        </div> */}
+        </div>
 
         <div className="flex flex-col justify-center items-center mb-5 w-full">
           <Button

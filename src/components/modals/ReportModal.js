@@ -59,22 +59,25 @@ export default function ReportModal({
             <Zoom>
               <img src={photo1} width="50px" alt="report image" />
             </Zoom>
-            {photo2 != null && (
+            {photo2 != null ? (
               <Zoom>
                 <img src={photo2} width="50px" alt="report image" />
               </Zoom>
-            )}
-            {photo3 != null && (
+            ) : <p>N/A</p>}
+            {photo3 !== null ? (
               <Zoom>
                 <img src={photo3} width="50px" alt="report image" />
               </Zoom>
-            )}
-            {photo4 != null && (
+            ): <p>N/A</p>}
+            {photo4 !== null ? (
               <Zoom>
                 <img src={photo4} width="50px" alt="report image" />
               </Zoom>
-            )}
+            ): <p>N/A</p>}
           </div>
+
+          <br/>
+
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Coordinates:
           </Typography>
@@ -100,15 +103,23 @@ export default function ReportModal({
               </Marker>
             </ReactMapGL> */}
           </div>
+          {
+            localStorage.getItem("platform")=='Ad-hoc' &&
+          (
+           <div>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Status:
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             {status}
           </Typography>
+          </div>)
+          
+          }
+          
 
           {JSON.parse(localStorage.getItem("roles"))[0].name !==
-            "Supervisor" && (
+            "Supervisor" && localStorage.getItem("platform")=='Ad-hoc' && (
             <div className="flex flex-row justify-between items-center my-5">
               <Item.Button onClick={approve} color="primary" variant="outlined">
                 Approve

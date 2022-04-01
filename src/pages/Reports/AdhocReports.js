@@ -7,7 +7,7 @@ import * as Item from "@mui/material";
 import Moment from "react-moment";
 import ProjectTable from "../../components/tables/ProjectTable";
 import PaginationComponent from "../../components/tables/Pagination";
-import { API_BASE } from "../../utils/Api";
+import { API_BASE,API_BASE_UPLOADS } from "../../utils/Api";
 import ReportModal from "../../components/modals/ReportModal";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -26,6 +26,7 @@ import GreenBG from "../../assets/bg/greensquare.svg";
 import OrangeBG from "../../assets/bg/orangesquare.svg";
 import RedBG from "../../assets/bg/redsquare.svg";
 import YellowBG from "../../assets/bg/yellowsquare.svg";
+import { useHistory } from "react-router-dom";
 
 function AdHocReports() {
   const initialSearchTerms = {
@@ -61,6 +62,8 @@ function AdHocReports() {
   // @ts-ignore
   // eslint-disable-next-line import/no-webpack-loader-syntax
   //mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+
+  const history = useHistory();
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -266,6 +269,10 @@ function AdHocReports() {
     console.log("Approved", result);
   };
 
+   const viewReport = (uuid) => {
+    history.push(`/report/${uuid}`);
+  };
+
   React.useEffect(() => {
     getUser();
     getStates();
@@ -378,7 +385,7 @@ function AdHocReports() {
       cell: (row) => {
         return (
           <Item.Avatar
-            src={`https://roadzoftserver.xyz/uploads/${row.photo_1}`}
+            src={`${API_BASE_UPLOADS}/${row.photo_1}`}
             variant="square"
           />
         );
@@ -431,10 +438,10 @@ function AdHocReports() {
           <div>
             <ReportModal
               status={row.status}
-              photo1={`https://roadzoftserver.xyz/uploads/${row.photo_1}`}
-              photo2={`https://roadzoftserver.xyz/uploads/${row.photo_2}`}
-              photo3={`https://roadzoftserver.xyz/uploads/${row.photo_3}`}
-              photo4={`https://roadzoftserver.xyz/uploads/${row.photo_4}`}
+              photo1={row.photo_1 !=null ? `${API_BASE_UPLOADS}/${row.photo_1}`:null}
+              photo2={row.photo_2 !=null ? `${API_BASE_UPLOADS}/${row.photo_2}` :null}
+              photo3={row.photo_3 !=null ? `${API_BASE_UPLOADS}/${row.photo_3}` :null}
+              photo4={row.photo_4 !=null ? `${API_BASE_UPLOADS}/${row.photo_4}` :null}
               latitude={parseFloat(row.latitude)}
               longitude={parseFloat(row.longitude)}
               apiKey="pk.eyJ1IjoibWljaG9sdXNhbnlhIiwiYSI6ImNrd3MybWM4YjEyOGwycHFvaDhsc2Z2Y3AifQ.uSFsVJGkOiUXSTG2SOES2A"
@@ -450,6 +457,21 @@ function AdHocReports() {
                 <ReportQuery uuid={row.uuid} reportId={row.id} />
               )}
           </div>
+        );
+      },
+    },
+     {
+      selector: "id",
+      name: "",
+      cell: (row) => {
+        return (
+          <Item.Button
+            onClick={() => viewReport(row.uuid)}
+            color="success"
+            variant="contained"
+          >
+            View
+          </Item.Button>
         );
       },
     },

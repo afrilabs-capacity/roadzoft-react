@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import { blue } from "@mui/material/colors";
 import { useHistory } from "react-router-dom";
 
-const platforms = ["Ad-hoc", "Supervisor"];
+const platforms = ["Ad-hoc", "Citizen","Supervisor"];
 
 function SwitchDialog(props) {
   const { onClose, selectedValue, open } = props;
@@ -28,7 +28,7 @@ function SwitchDialog(props) {
     if (value == "Ad-hoc") {
       localStorage.setItem("platform", "Ad-hoc");
       window.location.reload();
-    } else if (value == "Citizens") {
+    } else if (value == "Citizen") {
       localStorage.setItem("platform", "Citizen");
       window.location.reload();
     } else if (value == "Supervisor") {

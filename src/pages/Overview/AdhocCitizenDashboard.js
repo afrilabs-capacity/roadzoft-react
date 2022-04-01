@@ -58,6 +58,7 @@ function AdhocCitizenDashboard() {
   };
 
   const getUser = async () => {
+  
     try {
       const response = await fetch(
         `${API_BASE}/user/${localStorage.getItem("user")}`,
@@ -70,8 +71,8 @@ function AdhocCitizenDashboard() {
         }
       );
       const result = await response.json();
-      const data = result.data;
-      setUser(result.data);
+      //const data = result.data;
+      result.data && setUser(result.data);
       // console.log("User:", result);
     } catch (error) {
       console.log(error);

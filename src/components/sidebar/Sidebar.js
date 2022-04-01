@@ -39,15 +39,17 @@ export default function Sidebar() {
   //   alert(JSON.stringify(localStorage.getItem("roles")));
   // }, []);
 
+ const sidebarColor = localStorage.getItem("platform") == "Ad-hoc" ? 'bg-green-900' : 'bg-red-900'
+
   return (
     <>
       <div
         className={
-          open ? "sidebar-container block bg-green-900 h-screen" : "hidden"
+          open ? "sidebar-container block h-screen " + sidebarColor : "hidden"
         }
       >
-        <div className="sidebar-container bg-green-900">
-          <div className="sidebar-content bg-green-900 mx-5 flex flex-col justify-center items-center text-white">
+        <div className={"sidebar-container "+ sidebarColor}>
+          <div className={"sidebar-content  mx-5 flex flex-col justify-center items-center text-white "+sidebarColor}>
             <div className="sidebar-logo my-5 flex flex-row justify-center items-center">
               <img className="ml-5" src={Logo} width="50px" alt="logo" />
               <h2 className="font ml-1 mr-auto">ROADZOFT</h2>
@@ -59,8 +61,8 @@ export default function Sidebar() {
                 {/* <ToggleOnIcon color="inherit" /> */}
               </div>
             </div>
-            <nav className="nav-menu bg-green-900">
-              <ul className="sidebar bg-green-900">
+            <nav className={"nav-menu "+sidebarColor}>
+              <ul className={"sidebar "+sidebarColor}>
                 {defautSidebar &&
                   defautSidebar.map((item, i) => (
                     <>

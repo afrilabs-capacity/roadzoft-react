@@ -21,6 +21,7 @@ import CitizenUsers from "./pages/citizen/Users";
 import { transitions, positions, Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import SingleSupervisorReport from "./pages/supervisor/SingleSupervisorReport";
+import SingleAdHocReport from "./pages/Reports/SingleAdHocReport";
 
 function App() {
   const options = {
@@ -53,10 +54,16 @@ function App() {
             <Route path="/add-user" exact component={AddUser} />
             <Route path="/add-report" exact component={AddReport} />
             <Route
+              path="/report/:uuid"
+              exact
+              component={SingleAdHocReport}
+            />
+            <Route
               path="/supervisor-report/:id"
               exact
               component={SingleSupervisorReport}
             />
+            
             <Route
               path="/citizen/dashboard"
               exact
