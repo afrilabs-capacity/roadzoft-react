@@ -47,7 +47,7 @@ function SingleAdHocReport() {
 
       const reportId = params.uuid;
       const response = await fetch(
-        `/api/report/${reportId}`,
+        `${API_BASE}/report/${reportId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function SingleAdHocReport() {
   const getUser = async () => {
     const userId = userReport.user_id;
     try {
-      const response = await fetch(`/api/user/${userId}`, {
+      const response = await fetch(`${API_BASE}/user/${userId}`, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -88,7 +88,7 @@ function SingleAdHocReport() {
   const getRealUser = async () => {
     try {
       const response = await fetch(
-        `/api/user/${localStorage.getItem("user")}`,
+        `${API_BASE}/user/${localStorage.getItem("user")}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -111,7 +111,7 @@ function SingleAdHocReport() {
   }, []);
 
   React.useEffect(() => {
-    // userReport.id && getUser();
+     userReport.id && getUser();
   }, [userReport]);
 
   return (
