@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as Icon from "react-feather";
 import * as Item from "@mui/material";
 import { useParams, useHistory, Link } from "react-router-dom";
@@ -19,6 +19,12 @@ export default function Header({ title, user }) {
     localStorage.removeItem("platform");
     history.push("/");
   };
+
+// location.pathname 
+
+//  React.useEffect(() => {
+//   alert(location.pathname.split('/')[1])
+//   }, []);
 
   return (
     <>
@@ -91,10 +97,21 @@ export default function Header({ title, user }) {
       </div>
 
       {location.pathname !== "/dashboard" && (
-        <div class="flex justify-between bg-white p-4 border">
+        <div class="flex justify-end bg-white p-4 border m-2 gap-4">
           <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {/* Failed Sends */}
           </h2>
+
+
+          { location.pathname.split('/')[1] =='user-profile'  && ( <Item.Button
+            onClick={()=>window.location.href="/add-user"}
+           className="m-2"
+            size="small"
+            variant="contained"
+          >
+            Add New
+          </Item.Button>) }
+
 
           <Item.Button
             size="small"
