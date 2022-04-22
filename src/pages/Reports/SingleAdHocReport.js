@@ -136,20 +136,20 @@ function SingleAdHocReport() {
                
 
                 <div className="my-2 p-2 text-center">
-                  <h3 className="text-xl font-bold">FERMA staff on-site ?</h3>
+                  <h3 className="text-xl font-bold">FERMA staff on-site </h3>
                   <p>{userReport.sos ? userReport.sos ? "Yes" : "No" : "N/A"}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">
-                    Name of FERMA staff onsite ?
+                    Name of FERMA staff on-site
                   </h3>
                   <p>{userReport.nfsos ? userReport.nfsos : "N/A"}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">
-                    Number of workers do you have on site
+                    Number of workers  on-site
                   </h3>
                   <p>{userReport.nwos ? userReport.nwos ?  userReport.nwos : "N/A" : "N/A"}</p>
                 </div>
@@ -189,7 +189,7 @@ function SingleAdHocReport() {
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">
-                    How was work being guided and divided among team members?
+                    Mode of work division among team members
                   </h3>
                   <p>{userReport.wgatm ? userReport.wgatm : "N/A"}</p>
                 </div>
@@ -199,6 +199,13 @@ function SingleAdHocReport() {
                     Overall review of activities of the day
                   </h3>
                   <p>{userReport.review ? userReport.review : "N/A"}</p>
+                </div>
+
+                 <div className="my-2 p-2 text-center">
+                  <h3 className="text-xl font-bold">
+                    Road Name
+                  </h3>
+                  <p>{userReport.stateroad ? userReport.stateroad : "N/A"}</p>
                 </div>
 
                  <div className="my-2 p-2 text-center">

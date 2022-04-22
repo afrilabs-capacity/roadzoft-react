@@ -27,6 +27,7 @@ import OrangeBG from "../../assets/bg/orangesquare.svg";
 import RedBG from "../../assets/bg/redsquare.svg";
 import YellowBG from "../../assets/bg/yellowsquare.svg";
 import { useHistory } from "react-router-dom";
+import { CollectionsOutlined } from "@mui/icons-material";
 
 function AdHocReports() {
   const initialSearchTerms = {
@@ -37,6 +38,7 @@ function AdHocReports() {
   };
   const [user, setUser] = React.useState({});
   const [reports, setReports] = React.useState([]);
+   const [reportsAll, setReportsAll] = React.useState();
   const [reportsData, setReportsData] = React.useState([]);
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(2);
@@ -58,12 +60,14 @@ function AdHocReports() {
   const [lgaByStateList, setLgaByStateList] = React.useState([]);
   const [searchTerms, setSearchPTerms] = React.useState(initialSearchTerms);
   const [status, setStatus] = React.useState("");
+  const [csvKey, setCSVKey] = React.useState(Math.random() );
 
   // @ts-ignore
   // eslint-disable-next-line import/no-webpack-loader-syntax
   //mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
   const history = useHistory();
+   const exportBtn = React.useRef();
 
   const handleChange = (event, value) => {
     setPage(value);
@@ -211,6 +215,46 @@ function AdHocReports() {
     result && result.data && setLoading(false);
   };
 
+
+  const getReportsAll = async () => {
+    // alert( searchTerms.state_id)
+    const response = await fetch(
+      `${API_BASE}/reports?${new URLSearchParams(
+        searchTerms
+      ).toString()}&page=${page}&all=true`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "X-RGM-PLATFORM": localStorage.getItem("platform"),
+        },
+      }
+    );
+    
+    const result = await response.json();
+     let  modifiedReports= []
+    if(result && result.data){
+      modifiedReports= result.data.data.map(item=>{
+      
+        return {...item, photo_1:item.photo_1!=null ? API_BASE_UPLOADS+"/"+item.photo_1: "N/A",photo_2:item.photo_2!=null ?API_BASE_UPLOADS+"/"+item.photo_2: "N/A",photo_3:item.photo_3!=null ? API_BASE_UPLOADS+"/"+item.photo_3: "N/A",photo_4:item.photo_4!=null ? API_BASE_UPLOADS+"/"+item.photo_4: "N/A"};
+      
+      
+      })
+
+    result && result.data && setReportsAll(modifiedReports);
+    result && result.data &&  exportBtn.current.link.click();
+
+    }
+    console.log('MODIFIED RESULTS',modifiedReports)
+    
+    
+    // result && setReportsDataAll(result.data.data);
+    // result && result.data && setTotalPages(result.data.last_page);
+    // result && result.data && setCountPerPage(result.data.per_page);
+    // result && result.data && setLoading(false);
+    // return response
+  };
+
   const getUser = async () => {
     try {
       const response = await fetch(
@@ -322,18 +366,44 @@ function AdHocReports() {
   // const filterResults = results.map((item) => item.item);
 
   const headers = [
-    { label: "Message", key: "message" },
+    { label: "State", key: "user.registeredstate.name" },
     { label: "Longitude", key: "longitude" },
     { label: "Latitude", key: "latitude" },
-    { label: "User", key: "user.name" },
+     { label: "Phote (1)", key: "photo_1" },
+     { label: "Phote (2)", key: "photo_2"},
+     { label: "Phote (3)", key: "photo_3" },
+     { label: "Phote (4)", key: "photo_4"},
+     { label: "FERMA staff on-site ?", key: "sos" },
+     { label: "Name of FERMA staff onsite", key: "nfsos" },
+      { label: "Number of workers on site", key: "nwos" },
+       { label: "Nature of work being carried out", key: "now" },
+       { label: "Quality of work carried out", key: "rating" },
+       { label: "Number of active workers", key: "npw" },
+        { label: "Good team work", key: "gtw" },
+         { label: "Adequate equipment provision", key: "eqw" },
+         { label: "Mode of work division among team members?", key: "wgatm" },
+         { label: "Overall review of activities of the day", key: "review" },
+          { label: "Road Name", key: "stateroad" },
+           { label: "Submitted", key: "posted" },
   ];
 
-  const csvData = { ...reportsData };
+  const csvData = { ...reportsData};
+
+  //  const csvData =
+  //   filterTerm == ""
+  //     ? data.map((row) => ({
+  //         ...row,
+  //         users: JSON.stringify(row.users),
+  //       }))
+  //     : filterResults.map((row) => ({
+  //         ...row,
+  //         users: JSON.stringify(row.users),
+  //       }));
 
   const csvReport = {
     data: csvData,
     headers: headers,
-    filename: `${Date.now()}_Project_Report.csv`,
+    filename: `${Date.now()}_Project_Reports.csv`,
   };
 
   const infos = [
@@ -489,6 +559,18 @@ function AdHocReports() {
             user={user}
             title={localStorage.getItem("platform") + " " + title.toUpperCase()}
           />
+
+           {/* <div className="flex flex-row justify-between">
+             <div></div>
+           <Item.Button
+            onClick={()=>window.location.href="/add-user"}
+           className="m-2"
+            size="small"
+            variant="contained"
+          >
+            Download Reports
+          </Item.Button> 
+          </div> */}
           {/* <h3 className="mx-5 mt-5 mb-3 font-bold text-gray-700 text-2xl">
             {localStorage.getItem("platform")} Reports
           </h3> */}
@@ -537,13 +619,7 @@ function AdHocReports() {
           </div>
           <hr />
           <div className="my-3 flex flex-row justify-evenly items-center">
-            <div>
-              <h3>Filter: </h3>
-              {/* <CSVLink className="flex flex-row" {...csvReport}>
-                {" "}
-                <Icons.Download />
-              </CSVLink> */}
-            </div>
+            
             <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Project</InputLabel>
@@ -625,6 +701,16 @@ function AdHocReports() {
                 </Select>
               </FormControl>
             </Box>
+            <div>
+              <h3>Export: </h3>
+              {reportsAll && (<CSVLink ref={exportBtn}  target='_blank'  className="flex flex-row" headers={headers}  data={reportsAll} filename={`report-${new Date().toLocaleString()}.csv`}>
+               
+              </CSVLink>)
+              }
+
+<Icons.Download onClick={getReportsAll}  className="cursor-pointer"/> 
+              
+            </div>
           </div>
           {/* <div className="my-3 flex flex-row justify-evenly items-center">
             <div>
