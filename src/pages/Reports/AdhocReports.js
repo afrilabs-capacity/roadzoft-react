@@ -463,7 +463,7 @@ function AdHocReports() {
     },
     {
       selector: "message",
-      name: "Report",
+      name: "Overall Review",
       sortable: true,
       cell: (row) => {
         return row.message == null ? (
@@ -487,7 +487,7 @@ function AdHocReports() {
         );
       },
     },
-    { selector: "user.name", name: "User", sortable: true },
+    { selector: "user.registeredstate.name", name: "State", sortable: true },
     { selector: "status", name: "Status", sortable: true },
     {
       selector: "created_at",
