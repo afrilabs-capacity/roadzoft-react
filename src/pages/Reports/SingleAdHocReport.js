@@ -137,7 +137,7 @@ function SingleAdHocReport() {
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">FERMA staff on-site </h3>
-                  <p>{userReport.sos ? userReport.sos ? "Yes" : "No" : "N/A"}</p>
+                  <p>{userReport.sos!==null  ? userReport.sos ? "Yes" : "No" : "N/A"}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
@@ -177,14 +177,14 @@ function SingleAdHocReport() {
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">Good team work</h3>
-                  <p>{userReport.gtw ? userReport.gtw ?  "Yes" : "No" : "N/A"}</p>
+                  <p>{userReport.gtw!==null  ? userReport.gtw ?  "Yes" : "No" : "N/A"}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
                   <h3 className="text-xl font-bold">
                     Adequate equipment provision
                   </h3>
-                  <p>{userReport.eqw ? userReport.eqw  ?  "Yes" : "No" : "N/A"}</p>
+                  <p>{userReport.eqw!==null ? userReport.eqw  ?  "Yes" : "No" : "N/A"}</p>
                 </div>
 
                 <div className="my-2 p-2 text-center">
