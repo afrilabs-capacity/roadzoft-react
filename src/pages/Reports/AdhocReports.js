@@ -236,7 +236,7 @@ function AdHocReports() {
     if(result && result.data){
       modifiedReports= result.data.data.map(item=>{
       
-        return {...item, photo_1:item.photo_1!=null ? API_BASE_UPLOADS+"/"+item.photo_1: "N/A",photo_2:item.photo_2!=null ?API_BASE_UPLOADS+"/"+item.photo_2: "N/A",photo_3:item.photo_3!=null ? API_BASE_UPLOADS+"/"+item.photo_3: "N/A",photo_4:item.photo_4!=null ? API_BASE_UPLOADS+"/"+item.photo_4: "N/A"};
+        return {...item, photo_1:item.photo_1!=null ? API_BASE_UPLOADS+"/"+item.photo_1: "N/A",photo_2:item.photo_2!=null ?API_BASE_UPLOADS+"/"+item.photo_2: "N/A",photo_3:item.photo_3!=null ? API_BASE_UPLOADS+"/"+item.photo_3: "N/A",photo_4:item.photo_4!=null ? API_BASE_UPLOADS+"/"+item.photo_4: "N/A",sos:item.sos ? item.sos ? "Yes" : "No" : "N/A",gtw:item.gtw ? item.gtw ?  "Yes" : "No" : "N/A",eqw:item.eqw ? item.eqw  ?  "Yes" : "No" : "N/A"};
       
       
       })
