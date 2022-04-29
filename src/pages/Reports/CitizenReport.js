@@ -421,6 +421,7 @@ const getStates = async () => {
       },
     },
     { selector: "user.name", name: "User", sortable: true },
+     { selector: "user.registeredstate.name", name: "State", sortable: true },
     // { selector: "status", name: "Status", sortable: true },
     {
       selector: "created_at",
