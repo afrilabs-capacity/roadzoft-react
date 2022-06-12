@@ -9,6 +9,7 @@ import ProjectTable from "../../components/tables/ProjectTable";
 import PaginationComponent from "../../components/tables/Pagination";
 import { API_BASE,API_BASE_UPLOADS } from "../../utils/Api";
 import ReportModal from "../../components/modals/ReportModal";
+import ReportEditModal from "../../components/modals/ReportEditModal";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -26,16 +27,20 @@ import GreenBG from "../../assets/bg/greensquare.svg";
 import OrangeBG from "../../assets/bg/orangesquare.svg";
 import RedBG from "../../assets/bg/redsquare.svg";
 import YellowBG from "../../assets/bg/yellowsquare.svg";
+import { useHistory } from "react-router-dom";
+import { useAlert } from "react-alert";
 
 function CitizenReports() {
    const initialSearchTerms = {
     state_id: "",
     lga_id: "",
+    district_id: "",
     project_id: "",
     status: "",
   };
   const [user, setUser] = React.useState({});
   const [reports, setReports] = React.useState([]);
+  const [reportsAll, setReportsAll] = React.useState();
   const [reportsData, setReportsData] = React.useState([]);
   const [page, setPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(2);
@@ -45,7 +50,9 @@ function CitizenReports() {
   const [project, setProject] = React.useState("");
   const [loading, setLoading] = React.useState(true);
   const [state, setUserstate] = React.useState("");
+  const [zone, setUserZone] = React.useState("");
   const [lga, setLga] = React.useState("");
+  const [district, setDistrict] = React.useState("");
   const [projectId, setProjectId] = React.useState("");
   const [searchData, setSearchData] = React.useState([]);
   const [commentz, setCommentz] = React.useState([]);
@@ -54,15 +61,31 @@ function CitizenReports() {
   const [queried, setQuried] = React.useState([]);
   const [rejected, setRejected] = React.useState([]);
     const [statesList, setStatesList] = React.useState([]);
+     const [zonesList, setZonesList] = React.useState([]);
   const [lgaByStateList, setLgaByStateList] = React.useState([]);
+  const [districtByStateList, setDistrictByStateList] = React.useState([]);
   const [searchTerms, setSearchPTerms] = React.useState(initialSearchTerms);
 
   // @ts-ignore
   // eslint-disable-next-line import/no-webpack-loader-syntax
   //mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
+   const history = useHistory();
+   const exportBtn = React.useRef();
+   const alertMe = useAlert();
+
   const handleChange = (event, value) => {
     setPage(value);
+  };
+
+
+  const handleZoneChange = (event) => {
+    console.log(event.target.value);
+    setUserZone(event.target.value);
+    setSearchPTerms((prevState) => ({
+      ...prevState,
+      zone_id: event.target.value,
+    }));
   };
 
   const handleStateChange = (event) => {
@@ -90,15 +113,64 @@ function CitizenReports() {
     }));
   };
 
-  const title = "Reports";
+    const handleDistrictChange = (event) => {
+    console.log(event.target.value);
+    setDistrict(event.target.value);
+    setSearchPTerms((prevState) => ({
+      ...prevState,
+      district_id: event.target.value,
+    }));
   
-const getStates = async () => {
-    const response = await fetch(`${API_BASE}/states`, {
+  };
+
+  const title = "Reports";
+
+    const editReport = async (data) => {
+    const {message,stateroad,id} =data  
+    const response = await fetch(`${API_BASE}/report/update/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        message:message,
+        stateroad:stateroad,
+      }),
+    });
+    const result = await response.json();
+    getReports()
+    alertMe.show("Report Updated", { type: "success" });
+    // result && result.data && setZonesList(result.data);
+
+    console.log("editing report", result);
+  };
+
+  const getZones = async () => {
+    const response = await fetch(`${API_BASE}/zones`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
+    const result = await response.json();
+    result && result.data && setZonesList(result.data);
+
+    console.log("Users", result);
+  };
+  
+const getStatesByZoneId = async () => {
+    const response = await fetch(`${API_BASE}/zone/${zone}/states`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    setDistrictByStateList([])
+    setDistrict("")
+    setLgaByStateList([])
+    setLga("")
     const result = await response.json();
     result && result.data && setStatesList(result.data);
 
@@ -121,27 +193,43 @@ const getStates = async () => {
   };
 
 
-  const handleSearch = async () => {
-    const response = await fetch(`${API_BASE}/reports/search`, {
-      method: "POST",
+    const getDistrictsByStateId = async () => {
+    const response = await fetch(`${API_BASE}/state/${state}/districts`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "X-RGM-PLATFORM": "Ad-hoc",
       },
-      body: JSON.stringify({
-        project_id: project,
-        state: state,
-        lga: lga,
-      }),
     });
     const result = await response.json();
-    console.log("Search", result);
-    result && setReports(result.data.data);
-    setTotalPages(result.data.last_page);
-    setCountPerPage(result.data.per_page);
-    setLoading(false);
+    result &&
+      result.data &&
+      setDistrictByStateList((prevState) => (prevState = result.data));
+
+    console.log("Users", result);
   };
+
+
+  // const handleSearch = async () => {
+  //   const response = await fetch(`${API_BASE}/reports/search`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       "X-RGM-PLATFORM": "Ad-hoc",
+  //     },
+  //     body: JSON.stringify({
+  //       project_id: project,
+  //       state: state,
+  //       lga: lga,
+  //     }),
+  //   });
+  //   const result = await response.json();
+  //   console.log("Search", result);
+  //   result && setReports(result.data.data);
+  //   setTotalPages(result.data.last_page);
+  //   setCountPerPage(result.data.per_page);
+  //   setLoading(false);
+  // };
 
   const handleApprove = async (id) => {
     const response = await fetch(`${API_BASE}/report/${id}/action/0`, {
@@ -218,6 +306,45 @@ const getStates = async () => {
     setTotalPages(result.data.last_page);
   };
 
+    const getReportsAll = async () => {
+    // alert( searchTerms.state_id)
+    const response = await fetch(
+      `${API_BASE}/reports?${new URLSearchParams(
+        searchTerms
+      ).toString()}&page=${page}&all=true`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "X-RGM-PLATFORM": localStorage.getItem("platform"),
+        },
+      }
+    );
+    
+    const result = await response.json();
+     let  modifiedReports= []
+    if(result && result.data){
+      modifiedReports= result.data.data.map(item=>{
+      
+        return {...item, photo_1:item.photo_1!=null ? API_BASE_UPLOADS+"/"+item.photo_1: "N/A",photo_2:item.photo_2!=null ?API_BASE_UPLOADS+"/"+item.photo_2: "N/A",photo_3:item.photo_3!=null ? API_BASE_UPLOADS+"/"+item.photo_3: "N/A",photo_4:item.photo_4!=null ? API_BASE_UPLOADS+"/"+item.photo_4: "N/A",comment:item.message!==null ? item.message : "" ,};
+      
+      
+      })
+
+    result && result.data && setReportsAll(modifiedReports);
+    result && result.data &&  exportBtn.current.link.click();
+
+    }
+    console.log('MODIFIED RESULTS',modifiedReports)
+    
+    
+    // result && setReportsDataAll(result.data.data);
+    // result && result.data && setTotalPages(result.data.last_page);
+    // result && result.data && setCountPerPage(result.data.per_page);
+    // result && result.data && setLoading(false);
+    // return response
+  };
+
   const getUser = async () => {
     try {
       const response = await fetch(
@@ -281,7 +408,8 @@ const getStates = async () => {
 
   React.useEffect(() => {
     getUser();
-    getStates();
+    getZones()
+    // getStates();
     getProjects();
   }, []);
 
@@ -291,12 +419,22 @@ const getStates = async () => {
 
   React.useEffect(() => {
     getLgasByStateId();
+    getDistrictsByStateId()
     getReports();
   }, [state]);
 
   React.useEffect(() => {
+    getStatesByZoneId();
+    getReports();
+  }, [zone]);
+
+  React.useEffect(() => {
     getReports();
   }, [lga]);
+
+    React.useEffect(() => {
+    getReports();
+  }, [district]);
 
   const data = React.useMemo(() => reportsData);
 
@@ -316,22 +454,21 @@ const getStates = async () => {
   const filterResults = results.map((item) => item.item);
 
   const headers = [
-    { label: "Message", key: "message" },
+    { label: "Zone", key: "user.registeredstate.zone.name" },
+    { label: "Senatorial District", key: "user.registereddistrict.name" },
+    { label: "State", key: "user.registeredstate.name" },
     { label: "Longitude", key: "longitude" },
     { label: "Latitude", key: "latitude" },
-    { label: "User", key: "user.name" },
+     { label: "Phote (1)", key: "photo_1" },
+     { label: "Phote (2)", key: "photo_2"},
+     { label: "Phote (3)", key: "photo_3" },
+     { label: "Phote (4)", key: "photo_4"},
+     { label: "Comment", key: "message" },
+     { label: "Road Name", key: "stateroad" },
+    { label: "Submitted", key: "created_at" },
   ];
 
-  const csvData =
-    filterTerm == ""
-      ? data.map((row) => ({
-          ...row,
-          users: JSON.stringify(row.users),
-        }))
-      : filterResults.map((row) => ({
-          ...row,
-          users: JSON.stringify(row.users),
-        }));
+  const csvData = { ...reportsData};
 
   const csvReport = {
     data: csvData,
@@ -462,6 +599,26 @@ const getStates = async () => {
         );
       },
     },
+     {
+      selector: "id",
+      name: "Action",
+      sortable: true,
+      ignoreRowClick: true,
+      cell: (row) => {
+        return (
+          <div>
+            <ReportEditModal
+              data={row}
+              edit={(data) => editReport(data)}
+           
+            />
+            {/* {row.status === "Queried" && (
+              <ReportQuery uuid={row.uuid} reportId={row.id} />
+            )} */}
+          </div>
+        );
+      },
+    },
   ];
 
   return (
@@ -523,6 +680,8 @@ const getStates = async () => {
               infos.map((info) => <TopCards info={info} />)}
           </div>
           <hr />
+
+          
           <div className="my-3 flex flex-row justify-evenly items-center">
             
             <Box sx={{ minWidth: 200 }}>
@@ -545,6 +704,28 @@ const getStates = async () => {
                 </Select>
               </FormControl>
             </Box>
+
+             <Box sx={{ minWidth: 200 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Zone</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={zone}
+                  label="State"
+                  onChange={handleZoneChange}
+                >
+                  <MenuItem value="">Select Zone</MenuItem>
+                  {zonesList.length &&
+                    zonesList.map((item, i) => (
+                      <MenuItem value={item.id} key={i}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+
             <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">State</InputLabel>
@@ -578,6 +759,42 @@ const getStates = async () => {
                   <MenuItem value="">Select LGA</MenuItem>
                   {lgaByStateList.length &&
                     lgaByStateList.map((item, i) => (
+                      <MenuItem value={item.id} key={i}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+               <h3>Export: </h3>
+              {reportsAll && (<CSVLink ref={exportBtn}  target='_blank'  className="flex flex-row" headers={headers}  data={reportsAll} filename={`report-${new Date().toLocaleString()}.csv`}>
+               
+              </CSVLink>)
+              }
+
+<Icons.Download onClick={getReportsAll}  className="cursor-pointer"/> 
+
+           
+          </div>
+
+          <div className="my-3 flex flex-row justify-start items-center">
+             <Box sx={{ minWidth: 30 }}></Box>
+            
+              
+            <Box sx={{ minWidth: 200 }}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Senatorial District</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={district}
+                  label="Senatorial District"
+                  onChange={handleDistrictChange}
+                >
+                  <MenuItem value="">Select District</MenuItem>
+                  {districtByStateList.length &&
+                    districtByStateList.map((item, i) => (
                       <MenuItem value={item.id} key={i}>
                         {item.name}
                       </MenuItem>
