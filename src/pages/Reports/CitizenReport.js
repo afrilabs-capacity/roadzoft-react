@@ -7,7 +7,7 @@ import * as Item from "@mui/material";
 import Moment from "react-moment";
 import ProjectTable from "../../components/tables/ProjectTable";
 import PaginationComponent from "../../components/tables/Pagination";
-import { API_BASE,API_BASE_UPLOADS } from "../../utils/Api";
+import { API_BASE, API_BASE_UPLOADS } from "../../utils/Api";
 import ReportModal from "../../components/modals/ReportModal";
 import ReportEditModal from "../../components/modals/ReportEditModal";
 import InputLabel from "@mui/material/InputLabel";
@@ -20,6 +20,7 @@ import { CSVLink } from "react-csv";
 import Fuse from "fuse.js";
 import * as Icons from "react-feather";
 import ReportQuery from "../../components/modals/ReportQuery";
+import EarthView from "../../components/modals/EarthViewModal";
 import MapModal from "../../components/modals/MapModal";
 
 import BlueBG from "../../assets/bg/bluesquare.svg";
@@ -29,9 +30,10 @@ import RedBG from "../../assets/bg/redsquare.svg";
 import YellowBG from "../../assets/bg/yellowsquare.svg";
 import { useHistory } from "react-router-dom";
 import { useAlert } from "react-alert";
+import Iframe from "react-iframe";
 
 function CitizenReports() {
-   const initialSearchTerms = {
+  const initialSearchTerms = {
     state_id: "",
     lga_id: "",
     district_id: "",
@@ -60,8 +62,8 @@ function CitizenReports() {
   const [approved, setApproved] = React.useState([]);
   const [queried, setQuried] = React.useState([]);
   const [rejected, setRejected] = React.useState([]);
-    const [statesList, setStatesList] = React.useState([]);
-     const [zonesList, setZonesList] = React.useState([]);
+  const [statesList, setStatesList] = React.useState([]);
+  const [zonesList, setZonesList] = React.useState([]);
   const [lgaByStateList, setLgaByStateList] = React.useState([]);
   const [districtByStateList, setDistrictByStateList] = React.useState([]);
   const [searchTerms, setSearchPTerms] = React.useState(initialSearchTerms);
@@ -70,14 +72,13 @@ function CitizenReports() {
   // eslint-disable-next-line import/no-webpack-loader-syntax
   //mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
-   const history = useHistory();
-   const exportBtn = React.useRef();
-   const alertMe = useAlert();
+  const history = useHistory();
+  const exportBtn = React.useRef();
+  const alertMe = useAlert();
 
   const handleChange = (event, value) => {
     setPage(value);
   };
-
 
   const handleZoneChange = (event) => {
     console.log(event.target.value);
@@ -113,20 +114,19 @@ function CitizenReports() {
     }));
   };
 
-    const handleDistrictChange = (event) => {
+  const handleDistrictChange = (event) => {
     console.log(event.target.value);
     setDistrict(event.target.value);
     setSearchPTerms((prevState) => ({
       ...prevState,
       district_id: event.target.value,
     }));
-  
   };
 
   const title = "Reports";
 
-    const editReport = async (data) => {
-    const {message,stateroad,id} =data  
+  const editReport = async (data) => {
+    const { message, stateroad, id } = data;
     const response = await fetch(`${API_BASE}/report/update/${id}`, {
       method: "PATCH",
       headers: {
@@ -135,12 +135,12 @@ function CitizenReports() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        message:message,
-        stateroad:stateroad,
+        message: message,
+        stateroad: stateroad,
       }),
     });
     const result = await response.json();
-    getReports()
+    getReports();
     alertMe.show("Report Updated", { type: "success" });
     // result && result.data && setZonesList(result.data);
 
@@ -159,18 +159,18 @@ function CitizenReports() {
 
     console.log("Users", result);
   };
-  
-const getStatesByZoneId = async () => {
+
+  const getStatesByZoneId = async () => {
     const response = await fetch(`${API_BASE}/zone/${zone}/states`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
-    setDistrictByStateList([])
-    setDistrict("")
-    setLgaByStateList([])
-    setLga("")
+    setDistrictByStateList([]);
+    setDistrict("");
+    setLgaByStateList([]);
+    setLga("");
     const result = await response.json();
     result && result.data && setStatesList(result.data);
 
@@ -192,8 +192,7 @@ const getStatesByZoneId = async () => {
     console.log("Users", result);
   };
 
-
-    const getDistrictsByStateId = async () => {
+  const getDistrictsByStateId = async () => {
     const response = await fetch(`${API_BASE}/state/${state}/districts`, {
       headers: {
         "Content-Type": "application/json",
@@ -207,7 +206,6 @@ const getStatesByZoneId = async () => {
 
     console.log("Users", result);
   };
-
 
   // const handleSearch = async () => {
   //   const response = await fetch(`${API_BASE}/reports/search`, {
@@ -284,7 +282,7 @@ const getStatesByZoneId = async () => {
   //   console.log("Reports", result);
   // };
 
-   const getReports = async () => {
+  const getReports = async () => {
     const response = await fetch(
       `${API_BASE}/reports?${new URLSearchParams(
         searchTerms
@@ -306,7 +304,7 @@ const getStatesByZoneId = async () => {
     setTotalPages(result.data.last_page);
   };
 
-    const getReportsAll = async () => {
+  const getReportsAll = async () => {
     // alert( searchTerms.state_id)
     const response = await fetch(
       `${API_BASE}/reports?${new URLSearchParams(
@@ -320,24 +318,38 @@ const getStatesByZoneId = async () => {
         },
       }
     );
-    
+
     const result = await response.json();
-     let  modifiedReports= []
-    if(result && result.data){
-      modifiedReports= result.data.data.map(item=>{
-      
-        return {...item, photo_1:item.photo_1!=null ? API_BASE_UPLOADS+"/"+item.photo_1: "N/A",photo_2:item.photo_2!=null ?API_BASE_UPLOADS+"/"+item.photo_2: "N/A",photo_3:item.photo_3!=null ? API_BASE_UPLOADS+"/"+item.photo_3: "N/A",photo_4:item.photo_4!=null ? API_BASE_UPLOADS+"/"+item.photo_4: "N/A",comment:item.message!==null ? item.message : "" ,};
-      
-      
-      })
+    let modifiedReports = [];
+    if (result && result.data) {
+      modifiedReports = result.data.data.map((item) => {
+        return {
+          ...item,
+          photo_1:
+            item.photo_1 != null
+              ? API_BASE_UPLOADS + "/" + item.photo_1
+              : "N/A",
+          photo_2:
+            item.photo_2 != null
+              ? API_BASE_UPLOADS + "/" + item.photo_2
+              : "N/A",
+          photo_3:
+            item.photo_3 != null
+              ? API_BASE_UPLOADS + "/" + item.photo_3
+              : "N/A",
+          photo_4:
+            item.photo_4 != null
+              ? API_BASE_UPLOADS + "/" + item.photo_4
+              : "N/A",
+          comment: item.message !== null ? item.message : "",
+        };
+      });
 
-    result && result.data && setReportsAll(modifiedReports);
-    result && result.data &&  exportBtn.current.link.click();
-
+      result && result.data && setReportsAll(modifiedReports);
+      result && result.data && exportBtn.current.link.click();
     }
-    console.log('MODIFIED RESULTS',modifiedReports)
-    
-    
+    console.log("MODIFIED RESULTS", modifiedReports);
+
     // result && setReportsDataAll(result.data.data);
     // result && result.data && setTotalPages(result.data.last_page);
     // result && result.data && setCountPerPage(result.data.per_page);
@@ -408,7 +420,7 @@ const getStatesByZoneId = async () => {
 
   React.useEffect(() => {
     getUser();
-    getZones()
+    getZones();
     // getStates();
     getProjects();
   }, []);
@@ -419,7 +431,7 @@ const getStatesByZoneId = async () => {
 
   React.useEffect(() => {
     getLgasByStateId();
-    getDistrictsByStateId()
+    getDistrictsByStateId();
     getReports();
   }, [state]);
 
@@ -432,7 +444,7 @@ const getStatesByZoneId = async () => {
     getReports();
   }, [lga]);
 
-    React.useEffect(() => {
+  React.useEffect(() => {
     getReports();
   }, [district]);
 
@@ -459,16 +471,16 @@ const getStatesByZoneId = async () => {
     { label: "State", key: "user.registeredstate.name" },
     { label: "Longitude", key: "longitude" },
     { label: "Latitude", key: "latitude" },
-     { label: "Phote (1)", key: "photo_1" },
-     { label: "Phote (2)", key: "photo_2"},
-     { label: "Phote (3)", key: "photo_3" },
-     { label: "Phote (4)", key: "photo_4"},
-     { label: "Comment", key: "message" },
-     { label: "Road Name", key: "stateroad" },
+    { label: "Phote (1)", key: "photo_1" },
+    { label: "Phote (2)", key: "photo_2" },
+    { label: "Phote (3)", key: "photo_3" },
+    { label: "Phote (4)", key: "photo_4" },
+    { label: "Comment", key: "message" },
+    { label: "Road Name", key: "stateroad" },
     { label: "Submitted", key: "created_at" },
   ];
 
-  const csvData = { ...reportsData};
+  const csvData = { ...reportsData };
 
   const csvReport = {
     data: csvData,
@@ -558,7 +570,7 @@ const getStatesByZoneId = async () => {
       },
     },
     { selector: "user.name", name: "User", sortable: true },
-     { selector: "user.registeredstate.name", name: "State", sortable: true },
+    { selector: "user.registeredstate.name", name: "State", sortable: true },
     // { selector: "status", name: "Status", sortable: true },
     {
       selector: "created_at",
@@ -579,10 +591,26 @@ const getStatesByZoneId = async () => {
           <div>
             <ReportModal
               status={row.status}
-              photo1={row.photo_1 !=null ? `${API_BASE_UPLOADS}/${row.photo_1}`:null}
-              photo2={row.photo_2 !=null ? `${API_BASE_UPLOADS}/${row.photo_2}` :null}
-              photo3={row.photo_3 !=null ? `${API_BASE_UPLOADS}/${row.photo_3}` :null}
-              photo4={row.photo_4 !=null ? `${API_BASE_UPLOADS}/${row.photo_4}` :null}
+              photo1={
+                row.photo_1 != null
+                  ? `${API_BASE_UPLOADS}/${row.photo_1}`
+                  : null
+              }
+              photo2={
+                row.photo_2 != null
+                  ? `${API_BASE_UPLOADS}/${row.photo_2}`
+                  : null
+              }
+              photo3={
+                row.photo_3 != null
+                  ? `${API_BASE_UPLOADS}/${row.photo_3}`
+                  : null
+              }
+              photo4={
+                row.photo_4 != null
+                  ? `${API_BASE_UPLOADS}/${row.photo_4}`
+                  : null
+              }
               latitude={parseFloat(row.latitude)}
               longitude={parseFloat(row.longitude)}
               apiKey="pk.eyJ1IjoibWljaG9sdXNhbnlhIiwiYSI6ImNrd3MybWM4YjEyOGwycHFvaDhsc2Z2Y3AifQ.uSFsVJGkOiUXSTG2SOES2A"
@@ -599,7 +627,7 @@ const getStatesByZoneId = async () => {
         );
       },
     },
-     {
+    {
       selector: "id",
       name: "Action",
       sortable: true,
@@ -607,11 +635,28 @@ const getStatesByZoneId = async () => {
       cell: (row) => {
         return (
           <div>
-            <ReportEditModal
-              data={row}
-              edit={(data) => editReport(data)}
-           
-            />
+            <ReportEditModal data={row} edit={(data) => editReport(data)} />
+            {/* {row.status === "Queried" && (
+              <ReportQuery uuid={row.uuid} reportId={row.id} />
+            )} */}
+          </div>
+        );
+      },
+    },
+    {
+      selector: "id",
+      name: "Action",
+      sortable: true,
+      ignoreRowClick: true,
+      cell: (row) => {
+        return (
+          <div>
+            <a
+              href={`https://earth.google.com/web/search/${row.longitude},${row.latitude}`}
+              target="_blank"
+            >
+              Earth View
+            </a>
             {/* {row.status === "Queried" && (
               <ReportQuery uuid={row.uuid} reportId={row.id} />
             )} */}
@@ -673,7 +718,7 @@ const getStatesByZoneId = async () => {
             ))}
           </div>
           <hr />
-         <div className="p-2 m-2 grid md:grid-cols-5 gap-1 content-center">
+          <div className="p-2 m-2 grid md:grid-cols-5 gap-1 content-center">
             {reports &&
               reports.data &&
               reports.report_meta &&
@@ -681,9 +726,7 @@ const getStatesByZoneId = async () => {
           </div>
           <hr />
 
-          
           <div className="my-3 flex flex-row justify-evenly items-center">
-            
             <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Project</InputLabel>
@@ -705,7 +748,7 @@ const getStatesByZoneId = async () => {
               </FormControl>
             </Box>
 
-             <Box sx={{ minWidth: 200 }}>
+            <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Zone</InputLabel>
                 <Select
@@ -767,24 +810,32 @@ const getStatesByZoneId = async () => {
               </FormControl>
             </Box>
 
-               <h3>Export: </h3>
-              {reportsAll && (<CSVLink ref={exportBtn}  target='_blank'  className="flex flex-row" headers={headers}  data={reportsAll} filename={`report-${new Date().toLocaleString()}.csv`}>
-               
-              </CSVLink>)
-              }
+            <h3>Export: </h3>
+            {reportsAll && (
+              <CSVLink
+                ref={exportBtn}
+                target="_blank"
+                className="flex flex-row"
+                headers={headers}
+                data={reportsAll}
+                filename={`report-${new Date().toLocaleString()}.csv`}
+              ></CSVLink>
+            )}
 
-<Icons.Download onClick={getReportsAll}  className="cursor-pointer"/> 
-
-           
+            <Icons.Download
+              onClick={getReportsAll}
+              className="cursor-pointer"
+            />
           </div>
 
           <div className="my-3 flex flex-row justify-start items-center">
-             <Box sx={{ minWidth: 30 }}></Box>
-            
-              
+            <Box sx={{ minWidth: 30 }}></Box>
+
             <Box sx={{ minWidth: 200 }}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Senatorial District</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Senatorial District
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -802,8 +853,6 @@ const getStatesByZoneId = async () => {
                 </Select>
               </FormControl>
             </Box>
-
-           
           </div>
           <hr />
           <ProjectTable columns={columns} data={data} total={countPerPage} />
