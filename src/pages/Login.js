@@ -75,7 +75,7 @@ export default function Login() {
 
   return (
     <div className="login-container p-5 md:p-20 grid h-screen">
-      <div className="grid md:flex justify-center items-center p-5 rounded bg-none md:bg-white">
+      <div className="grid md:grid-cols-2 justify-center items-center p-5 rounded bg-none md:bg-white">
         <div className="overlay p-6 max-w-sm mx-auto bg-white rounded-xl border flex flex-col items-center space">
           <div className="flex flex-col justify-between items-center mb-5">
             <img src={Logo} width="90" alt="Ferma Logo" />
@@ -136,13 +136,27 @@ export default function Login() {
           )}
         </div>
 
-        <div className="overlay p-6 max-w-sm mx-auto flex flex-col items-center space flex bg-white rounded-xl my-2 md:my-0">
-          <img src="/phone.png" class="my-2" />
-          <a href="/app_new.apk" download>
-            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-              Download Roadzoft Mobile App
-            </button>
-          </a>
+        <div className="overlay flex flex-col items-center space flex bg-white rounded-xl my-2 md:my-0  bg-green-50 p-2">
+          <h1 className="text-2xl"> Download Roadzoft Mobile App</h1>
+          <div className="grid md:grid-cols-2 gap 4 items-center justify-center">
+            <div className="text-center mx-2">
+              <img src="/phone.png" class="my-2" />
+              <a href="/app_new.apk" download>
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                  Download Ad-Hoc App
+                </button>
+              </a>
+            </div>
+
+            <div className="text-center mx-2">
+              <img src="/phone.png" class="my-2" />
+              <a href="/citizen-app-release.apk" download>
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                  Download Citizens App
+                </button>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
