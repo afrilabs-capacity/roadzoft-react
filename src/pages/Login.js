@@ -86,7 +86,7 @@ export default function Login() {
               ROADZOFT
             </h2>
             <h4 style={{ color: "#017831" }} className="text-center">
-              FERMA Monotoring and Evaluation Portal
+              Monotoring and Evaluation Portal
             </h4>
           </div>
           <div className="flex flex-col justify-center items-center mb-5 w-full">
